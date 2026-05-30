@@ -1,4 +1,9 @@
-id,title,description,source
-1,Python automation developer,"Remote Python scraping with Playwright and PostgreSQL, $45 hourly",reddit
-2,Excel report automation,"Build API to Excel reports with pandas, $30 hourly",upwork
-3,Frontend task,"Small CSS landing page, $15 hourly",remoteok
+id,title,description,source,posted_at,url
+csv-001,Python automation developer,"Remote Python scraping with Playwright, PostgreSQL, Docker and Telegram alerts. $45 hourly",reddit,2026-04-28,https://example.com/jobs/csv-001
+csv-002,API to Excel reporting workflow,"Build API to Excel reports with pandas, SQL and Streamlit dashboard. Remote EU, $35 hourly",upwork,2026-04-29,https://example.com/jobs/csv-002
+csv-003,Frontend landing page task,"Small CSS landing page, no backend, $15 hourly",remoteok,2026-04-30,https://example.com/jobs/csv-003
+csv-004,Data quality dashboard,"Need pandas validation, PostgreSQL, FastAPI endpoint, dashboard and Docker setup. Remote, $50/hr",hackernews,2026-05-01,https://example.com/jobs/csv-004
+csv-005,Selenium workflow automation,"Browser automation with Selenium, retries, screenshots and pytest. Worldwide, $42 per hour",reddit,2026-05-02,https://example.com/jobs/csv-005
+csv-006,Junior VA script cleanup,"Junior task: clean a tiny script and update README, $12 hourly",upwork,2026-05-03,https://example.com/jobs/csv-006
+csv-007,Remote analytics data pipeline,"Python ETL, pandas, SQL, PostgreSQL, Streamlit dashboard and business analytics. $58/hr",remoteok,2026-05-04,https://example.com/jobs/csv-007
+csv-008,Lead platform architect,"Senior lead role, 8+ years, Kubernetes, Java, enterprise roadmap, $95 hourly",hackernews,2026-05-05,https://example.com/jobs/csv-008

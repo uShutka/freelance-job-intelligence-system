@@ -5,4 +5,4 @@ COPY src ./src
 COPY data ./data
 COPY dashboard ./dashboard
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir .
-CMD ["python", "-m", "freelance_job_intelligence_system.core"]
+CMD ["uvicorn", "freelance_job_intelligence_system.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

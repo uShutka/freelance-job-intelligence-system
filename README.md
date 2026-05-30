@@ -1,104 +1,164 @@
-# Freelance Job Intelligence System
+# Freelance & Remote Job Market Intelligence System
 
-    ![Dashboard screenshot](docs/screenshots/dashboard-overview.png)
+Production-style system that collects freelance and remote job posts, extracts skills and rates, classifies seniority, calculates relevance score, stores enriched records, exposes analytics through FastAPI, visualizes market trends, and prepares Telegram alerts for the best opportunities.
 
-    ## Project Overview
+## Project Overview
 
-    System that collects freelance and remote job posts, extracts skills and rates, scores relevance, stores results, visualizes market trends, and sends Telegram notifications.
+This project is a market intelligence tool for freelance and remote job opportunities. It combines data collection, parsing, lightweight NLP, scoring, analytics, dashboarding, API design, tests, Docker, and CI.
 
-    ## Business Problem
+## Business Problem
 
-    Many businesses rely on manual data collection, spreadsheets, and repeated browser actions. This creates slow workflows, human errors, outdated reports, and poor visibility into business metrics.
+Freelancers and remote candidates often monitor many sources manually. Good opportunities are easy to miss, and raw job posts do not answer the important questions: which skills are in demand, which sources have better rates, and which posts are actually relevant.
 
-    ## Solution
+## Solution
 
-    This project automates the workflow: data collection, cleaning, validation, structured storage, analytical metrics, dashboard/report output, and production-style tests/CI.
+The system collects job posts from CSV and mock Reddit/Hacker News collectors, enriches them with extracted skills, hourly rate, location, seniority, relevance score, and score reasons, then serves the data through API, dashboard, and alert previews.
 
-    ## Architecture
+## Architecture
 
-    ![Architecture](docs/architecture.png)
+```text
+Job Sources
+-> Collectors
+-> Parser & Enrichment Services
+-> Relevance Engine
+-> Repository Layer
+-> Analytics Layer
+-> FastAPI + Dashboard + Telegram Alerts
+```
 
-    ```text
-    Data Sources -> Validation & Cleaning -> Analytical Models -> API / Dashboard / Reports
-    ```
+## Features
 
-    ## Features
+- Multi-source job collection
+- Title/body/rate/location/skills parsing
+- Seniority classification: junior, middle, senior
+- Separate `relevance_engine.py` scoring module
+- Source quality analytics
+- Skill demand trends
+- Average rates by skill
+- Top opportunity alert preview
+- REST API
+- Streamlit dashboard
+- Docker Compose
+- pytest and GitHub Actions
 
-    - Clean project structure
-    - Sample data and reproducible analytics
-    - Validation and transformation logic
-    - Analytical metrics
-    - Dashboard/report-ready output
-    - Dockerized setup
-    - Automated tests
-    - GitHub Actions CI
+## Tech Stack
 
-    ## Tech Stack
+Python, pandas, FastAPI, Streamlit, Plotly, Docker, pytest, ruff, Telegram Bot API-ready alert module.
 
-    Python, PostgreSQL, pandas, FastAPI, Streamlit, Telegram Bot API
+## Relevance Scoring
 
-    ## Database Schema
+The scoring model rewards matches with the target profile:
 
-    Main entities:
+- Python match: +20
+- Automation/scraping match: +20
+- Data/analytics stack match: +15
+- FastAPI backend match: +10
+- Docker production setup: +5
+- Remote-friendly post: +10
+- Hourly rate detected: +10
+- Low rate penalty: -10
+- Senior-only penalty: -20
+- Junior task penalty: -5
 
-    - job_sources
-- job_posts
-- extracted_skills
-- relevance_scores
-- alerts
+The scoring logic is intentionally isolated in `src/freelance_job_intelligence_system/services/relevance_engine.py` and covered by tests.
 
-    ## Data Pipeline
+## Database Schema
 
-    ```text
-    Raw data -> pandas transformations -> metrics -> business conclusions -> dashboard/report
-    ```
+Production-ready tables would include:
 
-    ## API Endpoints
+- `sources(id, name, type, base_url, is_active)`
+- `job_posts(id, external_id, source_id, title, body, url, posted_at, collected_at)`
+- `job_skills(id, job_id, skill)`
+- `job_scores(id, job_id, relevance_score, level, hourly_rate, reasons, created_at)`
+- `collection_runs(id, source_id, started_at, finished_at, status, items_collected, errors_count)`
+- `job_alerts(id, job_id, alert_type, message, created_at)`
 
-    - GET /health
-- GET /jobs
-- GET /analytics/skills
-- GET /alerts
+## Data Pipeline
 
-    ## Dashboard Screenshots
+1. Collect jobs from configured sources.
+2. Deduplicate by external id.
+3. Normalize title and body text.
+4. Extract skills, hourly rate, location, and seniority.
+5. Calculate relevance score and reasons.
+6. Build analytics by source, skill, rate, and level.
+7. Expose API/dashboard and prepare Telegram alert.
 
-    ![Dashboard overview](docs/screenshots/dashboard-overview.png)
+## API Endpoints
 
-    ## Analytics Results
+- `GET /health`
+- `GET /jobs`
+- `GET /jobs?min_score=70`
+- `GET /jobs/{job_id}`
+- `GET /analytics/summary`
+- `GET /analytics/sources`
+- `GET /analytics/skills`
+- `GET /analytics/rates`
+- `GET /analytics/levels`
+- `GET /alerts/top`
 
-    - Python/FastAPI jobs receive higher relevance scores.
-- Skill demand can be grouped by source and rate range.
+## Dashboard Screenshots
 
-    ## How to Run
+Screenshots are stored in `docs/screenshots/`:
 
-    ```bash
-    python -m pip install -e .
-    pytest
-    docker compose up --build
-    ```
+- Dashboard overview
+- Skill trends
+- Rate by skill
+- Top jobs table
+- API response example
+- Telegram alert example
 
-    ## Tests
+## Analytics Results
 
-    ```bash
-    pytest
-    ```
+Example conclusions from the demo dataset:
 
-    The test suite covers transformation logic, metrics, validation/scoring rules, and output generation.
+- Python automation and data pipeline jobs have the highest relevance scores.
+- Remote posts with explicit hourly rates are easier to prioritize and alert on.
+- Senior-only roles may have higher rates, but relevance can be lower due to mismatch with target positioning.
+- FastAPI, PostgreSQL, pandas, Playwright/Selenium, and dashboard work cluster into the strongest opportunity segment.
 
-    ## Engineering Notes
+## How to Run
 
-    This project is designed as a production-style portfolio system, not a one-file script. It includes modular architecture, configuration, Docker setup, automated tests, CI, sample data, docs, and business-facing conclusions.
+```bash
+docker compose up --build
+```
 
-    ## Known Limitations
+Open:
 
-    - Demo data is used for portfolio purposes.
-    - External integrations are represented with sample data or replaceable adapters.
-    - Historical analysis becomes stronger as more data is collected.
+- API docs: `http://localhost:8003/docs`
+- Dashboard: `http://localhost:8504`
 
-    ## Future Improvements
+Local development:
 
-    - Add PostgreSQL persistence
-    - Add authentication
-    - Add background workers
-    - Add advanced anomaly detection
-    - Add export to PDF/Excel reports
+```bash
+python -m pip install -e .
+uvicorn freelance_job_intelligence_system.api.main:app --reload
+streamlit run dashboard/streamlit_app.py
+```
+
+## Tests
+
+```bash
+pytest
+ruff check .
+```
+
+The suite covers collectors, parsing, rate extraction, seniority classification, relevance scoring, enrichment, repositories, analytics, alerts, and API endpoints.
+
+## Engineering Notes
+
+The project is deliberately modular: collectors are replaceable, parsing is isolated, scoring is explainable, analytics consume enriched data, and alerts reuse the same top-job selection as the dashboard and API.
+
+## Known Limitations
+
+- External sources are mocked or CSV-based for portfolio reproducibility.
+- Real job boards may require API keys, rate limiting, custom selectors, or terms-of-service review.
+- Current NLP is rule-based and explainable, not ML-based.
+- Telegram sending requires real credentials in environment variables.
+
+## Future Improvements
+
+- Add Reddit/Hacker News API integrations.
+- Add PostgreSQL persistence and scheduled collection runs.
+- Add semantic similarity scoring with embeddings.
+- Add user-defined target profile weights.
+- Add saved searches and weekly market reports.
